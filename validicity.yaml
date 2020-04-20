@@ -1,0 +1,18 @@
+# Controls output from REST calls
+pretty: true
+verbose: false
+
+ # Levels are: all,finest,finer, fine, config, info, warning, severe, shout, off
+logging:
+  level: "info"
+
+# Configuration of REST API
+api:
+  # url: "https://test.validicity.cloud/rpc"
+  url: "https://prod.validicity.cloud/rpc"
+  username: "client"
+  # Why do we need scopes? Default value seems to not work for this one
+  scopes: ["client"]
+  password: "mupp"
+  clientID: "com.validicity.client"
+  application: "validicity"
