@@ -40,10 +40,65 @@ And then:
 sudo apt-get install dart
 ```
 
-## Install libnfc
+## Install libnfc and libfreefare
+Prerequisites:
+
+```
+sudo apt install libusb-0.1-4 libusb-dev
+```
+
+Blacklist modules that conflict:
+
+```
+sudo nano /etc/modprobe.d/blacklist-libnfc.conf
+blacklist nfc
+blacklist pn533
+blacklist pn533_usb
+```
+
+Add udev rule:
+
+```
+sudo cp contrib/udev/93-pn53x.rules /lib/udev/rules.d/
+sudo udevadm control --reload-rules && sudo udevadm trigger
+```
+
+Reinsert reader in USB port, I think that's needed. Build and install libnfc:
+
+```
+git clone git@github.com:nfc-tools/libnfc.git
+cd libnfc
+autoreconf -vis
+./configure
+make
+sudo make install
+sudo ldconfig
+```
+
+Then also libfreefare:
+
+```
+git clone git@github.com:nfc-tools/libfreefare.git
+autoreconf -vis
+./configure
+make
+sudo make install
+sudo ldconfig
+```
+
+## Install ntag-driver
+Now that libnfc and libfreefare is installed, we can go to `ntag-driver` directory and:
+
+```
+make
+sudo make install
+```
+
+You can try it out by just running `ntag-driver` and hitting enter to scan. Make sure the reader is connected.
 
 
 ## Install Validicityclient
+Finnaly time to build `validicityclient`:
 
 ```
 git clone git@github.com:Validicity/validicityclient.git
@@ -51,6 +106,8 @@ cd validicityclient
 make
 sudo make install
 ```
+
+Try it out with `validicityclient -h`!
 
 ## Install as service
 Check services:
