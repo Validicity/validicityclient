@@ -4,13 +4,14 @@
 #include <nfc/nfc.h>
 #include <freefare.h>
 
-int
-main(int argc, char *argv[])
-{
+// This is a small binary executable that communicates over stdout/stdin using JSON
+// payloads. It is spawned as a child process from the Dart main client and driven
+// from Dart to initiate scans etc.
+int main(int argc, char *argv[]) {
 	char line[50];
 
 	printf("{\"STATUS\":\"STARTING\"}\n");
-	fflush(stdout);
+	fflush(stdout); // Important for this to work!
 
     nfc_device *device = NULL;
     FreefareTag *tags = NULL;

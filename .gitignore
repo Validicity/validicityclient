@@ -1,0 +1,8 @@
+nfc
+validicityclient
+# Files and directories created by pub
+.dart_tool/
+.packages
+.pub/
+build/
+ntag-driver/ntag-driver
