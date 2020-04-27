@@ -2,13 +2,12 @@
 This is the NFC-scanner client written in Dart for the Validicity system. This software runs on a fanless small Linux-machine that has an NFC-scanner attached.
 It scans NFC tags and communicates with the Validicity server via a REST API, authenticated using OAuth2.
 
-## SSH
+## SSH Beaglebone
 Login as "debian" on Beaglebone:
 
 ```
 ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no debian@beaglebone.local  ("temppwd" out of the box)
 ```
-
 
 Install proper SSH key (from your own machine):
 
@@ -22,6 +21,15 @@ And after this we should be able to just login without password:
 ssh debian@beaglebone.local
 ```
 
+## SSH ODROID-C2
+
+After having turned on Avahi broadcasting using `armbian-config` this should work:
+
+```
+ssh -o PubkeyAuthentication=no validi@odroidc2.local
+```
+
+
 ## Update
 Update and upgrade installed packages:
 
@@ -29,22 +37,37 @@ Update and upgrade installed packages:
 
 # Install
 
-## Install Dart
+## Install Dart Beaglebone
 
 ```
-
+sudo apt-get update
+sudo apt-get install apt-transport-https
+sudo sh -c 'wget -qO- https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -'
+sudo sh -c 'wget -qO- https://storage.googleapis.com/download.dartlang.org/linux/debian/dart_stable.list > /etc/apt/sources.list.d/dart_stable.list'
 ```
 And then:
 
 ```
-sudo apt-get install dart
+sudo apt update && sudo apt install dart
 ```
+
+## Install Dart ODROID-C2
+Armbian does not have Dart in its regular repos so we need to do it manually:
+
+    wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.7.2/sdk/dartsdk-linux-arm64-release.zip
+    unzip dartsdk-linux-arm64-release.zip
+
+Add to .profile:
+
+    PATH="$HOME/dart-sdk/bin:$PATH"
+
+...and run it once in this shell too. Verify you can see `dart`, `dart2native`, `pub` etc.
 
 ## Install libnfc and libfreefare
-Prerequisites:
+Install prerequisites:
 
 ```
-sudo apt install libusb-0.1-4 libusb-dev
+sudo apt install libusb-dev libtool libglib2.0-dev
 ```
 
 Blacklist modules that conflict:
@@ -56,6 +79,11 @@ blacklist pn533
 blacklist pn533_usb
 ```
 
+```
+git clone git@github.com:nfc-tools/libnfc.git
+cd libnfc
+```
+
 Add udev rule:
 
 ```
@@ -63,11 +91,11 @@ sudo cp contrib/udev/93-pn53x.rules /lib/udev/rules.d/
 sudo udevadm control --reload-rules && sudo udevadm trigger
 ```
 
-Reinsert reader in USB port, I think that's needed. Build and install libnfc:
+Reinsert reader in USB port, I think that's needed, it should NOT light up red anymore!
+
+Build and install libnfc:
 
 ```
-git clone git@github.com:nfc-tools/libnfc.git
-cd libnfc
 autoreconf -vis
 ./configure
 make
@@ -86,10 +114,19 @@ sudo make install
 sudo ldconfig
 ```
 
+## Get Validicity software
+
+```
+git clone git@github.com:Validicity/validicityclient.git
+git clone git@github.com:Validicity/validicitylib.git
+```
+
+
 ## Install ntag-driver
 Now that libnfc and libfreefare is installed, we can go to `ntag-driver` directory and:
 
 ```
+cd ~/validicityclient/ntag-driver
 make
 sudo make install
 ```
@@ -98,16 +135,16 @@ You can try it out by just running `ntag-driver` and hitting enter to scan. Make
 
 
 ## Install Validicityclient
-Finnaly time to build `validicityclient`:
+Finally time to build `validicityclient`:
 
 ```
-git clone git@github.com:Validicity/validicityclient.git
-cd validicityclient
+cd ~/validicityclient
 make
 sudo make install
+cp validicityclient.yaml ~/
 ```
 
-Try it out with `validicityclient -h`!
+Try it out with `validicityclient -h` and `validicityclient testnfc`!
 
 ## Install as service
 Check services:
@@ -152,9 +189,6 @@ For logging, SystemD uses /var/log/system.log. To filter the log use:
 
 ## How it operates
 This client picks up a YAML configuration from the local file `~/validicity.yaml` and then proceeds to run continuously until interrupted via Linux signal.
-
-# Run
-Just run with `validicityclient` to get help.
 
 
 ## Notes
