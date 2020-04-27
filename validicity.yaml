@@ -6,6 +6,17 @@ verbose: false
 logging:
   level: "info"
 
+# Configuration of MQTT client
+mqtt:
+  # host: "test.validi.city"
+  host: "prod.validi.city"
+  username: "validicity"
+  password: "asd8asd99d"
+  application: "validicity"
+  secure: true
+  websocket: true
+  #logging: false
+
 # Configuration of REST API
 api:
   # url: "https://test.validicity.cloud/rpc"
