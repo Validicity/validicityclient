@@ -117,12 +117,14 @@ class TestNFCCommand extends BaseCommand {
   void exec() async {
     var nfc = NFCDriver();
     var keyboard = EmulatedKeyboard();
+    keyboard.open();
     print("Starting NFC scanner ...");
     await nfc.start();
     print("Ready to scan ...");
     var result = await nfc.scan();
     print(json.encode(result));
-    keyboard.print(result['id']);
+    await keyboard.print(result['ID']);
+    await keyboard.close();
   }
 }
 

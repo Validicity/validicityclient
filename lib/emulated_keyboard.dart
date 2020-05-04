@@ -42,7 +42,7 @@ class EmulatedKeyboard {
     '0': 39
   };
 
-  open() async {
+  open() {
     var file = File(device);
     sink = file.openWrite();
   }
