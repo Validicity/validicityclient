@@ -59,6 +59,7 @@ class EmulatedKeyboard {
       var char = string[i];
       await writeReport(char);
     }
+    await sink.flush();
   }
 
   writeReport(String char) async {

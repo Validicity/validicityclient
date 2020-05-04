@@ -277,8 +277,7 @@ Finally time to build `validicityclient`:
 
 ```
 cd ~/validicityclient
-make
-sudo make install
+./build.sh
 cp validicity.yaml ~/
 ```
 
