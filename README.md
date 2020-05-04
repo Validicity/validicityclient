@@ -1,6 +1,6 @@
 # Validityclient
 This is the NFC-scanner client written in Dart for the Validicity system. This software runs on a fanless small Linux-machine that has an NFC-scanner attached. At the moment we are using an ODROID-C2 machine.
-It scans NFC tags and communicates with the Validicity server via a REST API, authenticated using OAuth2.
+It scans NFC tags and communicates with the Validicity server via a REST API, authenticated using OAuth2. It also emulates a USB keyboard so that entering the scanned id into various IT-systems is easy and correct.
 
 All these instructions are based on running a Linux development machine, typically Ubuntu LTS.
 
@@ -63,6 +63,11 @@ Then we can:
 
 Then we need to enable USB Gadget stuff.
 
+From outside of LXC, use `synckernels.sh` to get them out and into `/home/validi` on the Odroid. Then do:
+
+    sudo dpkg -i linux-image-current-meson64_20.05.0-trunk_arm64.deb linux-dtb-current-meson64_20.05.0-trunk_arm64.deb linux-u-boot-current-odroidc2_20.05.0-trunk_arm64.deb linux-headers-current-meson64_20.05.0-trunk_arm64.deb
+
+Those should be enough I think.
 
 ## USB keyboard emulation
 In order for this to work we need to fix some settings in the dtb file controlling the device tree.
@@ -143,10 +148,11 @@ After a `sudo reboot` we should have something like this:
     validi@odroidc2:~$ 
 
 
-## Install Validicityclient
+## Get Validicity software
 In `/home/validi` do:
 
     git clone git@github.com:Validicity/validicityclient.git
+    git clone git@github.com:Validicity/validicitylib.git
 
 ## Install keyboard
 The emulated keyboard runs as a service.
@@ -164,10 +170,6 @@ Enable the systemd service so that emulatedkeyboard starts at boot.
 
     sudo systemctl enable emulatedkeyboard.service
 
-## Test emulation
-
-
-
 
 ## Install Dart
 Armbian does not have Dart in its regular repos so we need to do it manually:
@@ -181,7 +183,7 @@ Add to .profile:
 
 ...and run it once in this shell too. Verify you can see `dart`, `dart2native`, `pub` etc.
 
-## Install libnfc and libfand libfreefare
+## Install libnfc and libfreefare
 Install prerequisites:
 
 ```
@@ -196,6 +198,8 @@ blacklist nfc
 blacklist pn533
 blacklist pn533_usb
 ```
+
+Get libnfc:
 
 ```
 git clone git@github.com:nfc-tools/libnfc.git
@@ -224,21 +228,15 @@ sudo ldconfig
 Then also libfreefare:
 
 ```
+cd ..
 git clone git@github.com:nfc-tools/libfreefare.git
+cd libfreefare
 autoreconf -vis
 ./configure
 make
 sudo make install
 sudo ldconfig
 ```
-
-## Get Validicity software
-
-```
-git clone git@github.com:Validicity/validicityclient.git
-git clone git@github.com:Validicity/validicitylib.git
-```
-
 
 ## Install ntag-driver
 Now that libnfc and libfreefare is installed, we can go to `ntag-driver` directory and:
@@ -251,6 +249,28 @@ sudo make install
 
 You can try it out by just running `ntag-driver` and hitting enter to scan. Make sure the reader is connected.
 
+Check with `lsusb -t`:
+
+    /:  Bus 01.Port 1: Dev 1, Class=root_hub, Driver=dwc2/1p, 480M
+        |__ Port 1: Dev 2, If 0, Class=Hub, Driver=hub/4p, 480M
+            |__ Port 3: Dev 5, If 0, Class=Chip/SmartCard, Driver=, 12M
+
+Check with `dmesg | grep usb` (first 5 lines is the emulated keyboard, then the ACR122U):
+
+    [ 1111.487333] input: USB Keyboard as /devices/platform/soc/c9100000.usb/usb1/1-1/1-1.1/1-1.1:1.0/0003:04D9:1818.0003/input/input4
+    [ 1111.548555] hid-generic 0003:04D9:1818.0003: input,hidraw0: USB HID v1.10 Keyboard [USB Keyboard] on usb-c9100000.usb-1.1/input0
+    [ 1111.573225] input: USB Keyboard Consumer Control as /devices/platform/soc/c9100000.usb/usb1/1-1/1-1.1/1-1.1:1.1/0003:04D9:1818.0004/input/input5
+    [ 1111.632039] input: USB Keyboard System Control as /devices/platform/soc/c9100000.usb/usb1/1-1/1-1.1/1-1.1:1.1/0003:04D9:1818.0004/input/input6
+    [ 1111.632480] hid-generic 0003:04D9:1818.0004: input,hidraw1: USB HID v1.10 Device [USB Keyboard] on usb-c9100000.usb-1.1/input1
+    [ 1114.571338] usb 1-1.3: new full-speed USB device number 5 using dwc2
+    [ 1114.681044] usb 1-1.3: New USB device found, idVendor=072f, idProduct=2200, bcdDevice= 2.14
+    [ 1114.681079] usb 1-1.3: New USB device strings: Mfr=1, Product=2, SerialNumber=0
+    [ 1114.681091] usb 1-1.3: Product: ACR122U PICC Interface
+    [ 1114.681101] usb 1-1.3: Manufacturer: ACS
+    [ 1126.634827] usb 1-1.3: reset full-speed USB device number 5 using dwc2
+    [ 1248.973393] usb 1-1.3: reset full-speed USB device number 5 using dwc2
+    [ 1368.045119] usb 1-1.1: USB disconnect, device number 4
+
 
 ## Install Validicityclient
 Finally time to build `validicityclient`:
@@ -259,7 +279,7 @@ Finally time to build `validicityclient`:
 cd ~/validicityclient
 make
 sudo make install
-cp validicityclient.yaml ~/
+cp validicity.yaml ~/
 ```
 
 Try it out with `validicityclient -h` and `validicityclient testnfc`!
