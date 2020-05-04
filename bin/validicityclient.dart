@@ -38,6 +38,7 @@ main(List<String> arguments) async {
         valueHelp: "config file name",
         callback: (fn) => configFile = fn)
     ..addCommand(TestNFCCommand())
+    ..addCommand(RegisterCommand())
     ..addCommand(BootstrapCommand())
     ..addCommand(StatusCommand())
     ..argParser.addFlag('version',
