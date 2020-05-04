@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'dart:typed_data';
+
 class EmulatedKeyboard {
   String device = '/dev/hidg0';
   IOSink sink;
@@ -42,9 +44,11 @@ class EmulatedKeyboard {
     '0': 39
   };
 
-  open() {
+  open() async {
     var file = File(device);
-    sink = file.openWrite();
+    sink = file.openWrite(); // mode: FileMode.append);
+    writeRelease();
+    await sink.flush();
   }
 
   close() async {
@@ -53,18 +57,28 @@ class EmulatedKeyboard {
 
   /// a-z:   4-29
   /// 1-9,0: 30-39
-  print(String string) async {
+  type(String string) async {
     // Send each character as an input report
     for (int i = 0; i < string.length; i++) {
       var char = string[i];
-      await writeReport(char);
+      writeKey(char);
+      writeRelease();
     }
+    writeRelease();
     await sink.flush();
   }
 
-  writeReport(String char) async {
+  writeRelease() {
+    writeReport([0, 0, 0, 0, 0, 0, 0, 0]);
+  }
+
+  writeReport(List<int> payload) {
+    sink.add(payload);
+  }
+
+  writeKey(String char) {
     int byte = map[char.toLowerCase()];
-    List<int> payload = [0, 0, byte, 0, 0, 0, 0, 0];
-    await sink.write(payload);
+    print('Byte $char: $byte');
+    writeReport([0, 0, byte, 0, 0, 0, 0, 0]);
   }
 }

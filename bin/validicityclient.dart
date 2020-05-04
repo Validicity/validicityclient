@@ -38,6 +38,7 @@ main(List<String> arguments) async {
         valueHelp: "config file name",
         callback: (fn) => configFile = fn)
     ..addCommand(TestNFCCommand())
+    ..addCommand(TestEmulatedKeyboard())
     ..addCommand(RegisterCommand())
     ..addCommand(BootstrapCommand())
     ..addCommand(StatusCommand())
