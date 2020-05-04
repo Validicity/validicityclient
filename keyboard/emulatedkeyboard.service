@@ -1,0 +1,19 @@
+[Unit]
+Description=Emulated keyboard
+Documentation=
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/home/validi/validicityclient/keyboard
+ExecStart=/home/validi/validicityclient/keyboard/keyboard.py
+KillMode=mixed
+KillSignal=SIGTERM
+Restart=always
+RestartSec=2s
+NoNewPrivileges=yes
+StandardOutput=syslog+console
+StandardError=syslog+console
+
+[Install]
+WantedBy=multi-user.target
