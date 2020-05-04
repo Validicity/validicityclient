@@ -1,0 +1,69 @@
+import 'dart:io';
+
+class EmulatedKeyboard {
+  String device = '/dev/hidg0';
+  IOSink sink;
+  Map<String, int> map = {
+    'a': 4,
+    'b': 5,
+    'c': 6,
+    'd': 7,
+    'e': 8,
+    'f': 9,
+    'g': 10,
+    'h': 11,
+    'i': 12,
+    'j': 13,
+    'k': 14,
+    'l': 15,
+    'm': 16,
+    'n': 17,
+    'o': 18,
+    'p': 19,
+    'q': 20,
+    'r': 21,
+    's': 22,
+    't': 23,
+    'u': 24,
+    'v': 25,
+    'w': 26,
+    'x': 27,
+    'y': 28,
+    'z': 29,
+    '1': 30,
+    '2': 31,
+    '3': 32,
+    '4': 33,
+    '5': 34,
+    '6': 35,
+    '7': 36,
+    '8': 37,
+    '9': 38,
+    '0': 39
+  };
+
+  open() async {
+    var file = File(device);
+    sink = file.openWrite();
+  }
+
+  close() async {
+    await sink.close();
+  }
+
+  /// a-z:   4-29
+  /// 1-9,0: 30-39
+  print(String string) async {
+    // Send each character as an input report
+    for (int i = 0; i < string.length; i++) {
+      var char = string[i];
+      await writeReport(char);
+    }
+  }
+
+  writeReport(String char) async {
+    int byte = map[char.toLowerCase()];
+    List<int> payload = [0, 0, byte, 0, 0, 0, 0, 0];
+    await sink.write(payload);
+  }
+}

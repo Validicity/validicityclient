@@ -1,6 +1,8 @@
 /// Validicity
 library validicitylib;
 
+import 'dart:io';
+
 import 'package:args/args.dart';
 import 'package:validicitylib/config.dart';
 
@@ -16,6 +18,11 @@ export 'package:validicityclient/commands.dart';
 const appName = 'validityclient';
 
 String configFile = 'validity.yaml';
+String boardId = readBoardId();
+
+String readBoardId() {
+  return File('/sys/class/efuse/usid').readAsStringSync();
+}
 
 configureValidicity(ArgResults globalResults) {
   configure(appName, null, configFile);

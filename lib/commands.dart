@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:args/command_runner.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:validicityclient/emulated_keyboard.dart';
+import 'package:validicityclient/key.dart';
 import 'package:validicityclient/nfc.dart';
 import 'package:validicitylib/api.dart';
 import 'package:validicitylib/config.dart';
@@ -114,11 +116,13 @@ class TestNFCCommand extends BaseCommand {
 
   void exec() async {
     var nfc = NFCDriver();
+    var keyboard = EmulatedKeyboard();
     print("Starting NFC scanner ...");
     await nfc.start();
     print("Ready to scan ...");
     var result = await nfc.scan();
     print(json.encode(result));
+    keyboard.print(result['id']);
   }
 }
 
@@ -130,6 +134,8 @@ class StatusCommand extends BaseCommand {
 
   void exec() async {
     result = await api.status();
+    result['boardId'] = boardId;
+    result['config'] = config;
   }
 }
 
@@ -145,5 +151,48 @@ class BootstrapCommand extends BaseCommand {
   void exec() async {
     var payload = loadFile(argResults['file']);
     await client.doPost('bootstrap', payload, auth: false);
+  }
+}
+
+class CreateKeysCommand extends BaseCommand {
+  String description = "Create keys for this client in the Validicity system.";
+  String name = "createkeys";
+
+  RegisterCommand() {
+    /*argParser.addOption('user',
+        abbr: 'u', help: "The user to authenticate with");
+    argParser.addOption('password',
+        abbr: 'p', help: "The password to authenticate with");
+        */
+  }
+
+  void exec() async {
+    if (validicityKey != null) {
+      print(
+          "Keys already exist, can not create new keys. Remove existing key file first.");
+    } else {
+      Key.createKeys();
+    }
+  }
+}
+
+class RegisterCommand extends BaseCommand {
+  String description = "Register this client in the Validicity system.";
+  String name = "register";
+
+  RegisterCommand() {
+    /*argParser.addOption('user',
+        abbr: 'u', help: "The user to authenticate with");
+    argParser.addOption('password',
+        abbr: 'p', help: "The password to authenticate with");
+        */
+  }
+
+  void exec() async {
+    if (validicityKey == null) {
+      print("Keys do not exist, you first need to create new keys");
+    }
+    var payload = {"public": validicityKey.publicKey, "account": boardId};
+    await client.doPost('register', payload);
   }
 }
