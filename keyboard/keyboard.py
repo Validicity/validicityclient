@@ -138,10 +138,6 @@ class HidDaemon(object):
             subprocess.check_call("modprobe libcomposite", shell=True, close_fds=True)
 
     @staticmethod
-    def change_permission():
-        subprocess.check_call("chmod a+w %s" & self._devpath, shell=True, close_fds=True)
-
-    @staticmethod
     def unload_libcomposite():
         if HidDaemon.check_libcomposite():
             subprocess.check_call("rmmod libcomposite", shell=True, close_fds=True)
@@ -205,6 +201,8 @@ class HidDaemon(object):
 
         with open('/sys/kernel/config/usb_gadget/%s/UDC' % f_dev_name, 'w') as fd: fd.write('\r\n'.join(os.listdir('/sys/class/udc')))
 
+        subprocess.check_call("chmod a+w %s" & self._devpath, shell=True, close_fds=True)
+
     def run(self):
         if not self._libcomposite_already_running:
             self.load_libcomposite()
@@ -212,9 +210,6 @@ class HidDaemon(object):
 
         # Setup HID gadget (keyboard)
         self._setup()
-
-        # Add write permission to /dev/hidg0
-        self.change_permission()
 
         # Use asyncio because we can then do thing on the side (web ui, polling attached devices using pyusb ...)
         try:
