@@ -300,15 +300,15 @@ Check services:
 
     sudo service --status-all
 
-Then add a systemd service for it, so create `/etc/systemd/system/validityclient.service`:
+Then add a systemd service for it, so create `/etc/systemd/system/validicityclient.service`:
 
-    [Service][Unit]
-    Description=Validity client
+    [Unit]
+    Description=Validicity client
     After=network.target
 
     [Service]
-    User=validity
-    Group=validity
+    User=validi
+    Group=validi
     KillMode=mixed
     KillSignal=SIGTERM
     Restart=always
@@ -316,8 +316,8 @@ Then add a systemd service for it, so create `/etc/systemd/system/validityclient
     NoNewPrivileges=yes
     StandardOutput=syslog+console
     StandardError=syslog+console
-    SyslogIdentifier=Validity
-    ExecStart=/user/local/bin/validityclient run
+    SyslogIdentifier=Validicity
+    ExecStart=/user/local/bin/validicityclient testcontinuous
 
     [Install]
     WantedBy=multi-user.target
@@ -325,11 +325,11 @@ Then add a systemd service for it, so create `/etc/systemd/system/validityclient
 Now add it:
 
     sudo systemctl daemon-reload
-    sudo systemctl enable validityclient.service
-    sudo systemctl start validityclient.service
+    sudo systemctl enable validicityclient.service
+    sudo systemctl start validicityclient.service
 
 
-Check status with `sudo systemctl status validityclient`.
+Check status with `sudo systemctl status validicityclient`.
 
 For logging, SystemD uses /var/log/system.log. To filter the log use:
 
