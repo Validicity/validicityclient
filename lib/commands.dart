@@ -122,9 +122,15 @@ class TestNFCCommand extends BaseCommand {
     await nfc.start();
     print("Ready to scan ...");
     var result = await nfc.scan();
-    print(json.encode(result));
-    await keyboard.type(result['ID']);
-    await keyboard.close();
+    if (result['STATUS'] == 'OK') {
+      print(json.encode(result));
+      print("Printing ${result['ID']} on keyboard ...");
+      await keyboard.type(result['ID']);
+      await keyboard.close();
+    } else {
+      print("No tag scanned");
+    }
+    print("Done.");
   }
 }
 
@@ -135,13 +141,12 @@ class TestEmulatedKeyboard extends BaseCommand {
   void exec() async {
     var keyboard = EmulatedKeyboard();
     await keyboard.open();
-    print("Keyboard opened ...");
+    print("Keyboard opened ... Typing 'hello' followed by 'world'.");
     await keyboard.type('hello');
-    await keyboard.type('1103');
-    await keyboard.type('abcdefghijklmnopqrstuvwxyz0123456789z');
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(Duration(seconds: 1));
+    await keyboard.type('world');
     await keyboard.close();
-    print("Keyboard closed");
+    print("Done.");
   }
 }
 

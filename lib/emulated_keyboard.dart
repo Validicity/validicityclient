@@ -46,9 +46,7 @@ class EmulatedKeyboard {
 
   open() async {
     var file = File(device);
-    sink = file.openWrite(); // mode: FileMode.append);
-    writeRelease();
-    await sink.flush();
+    sink = file.openWrite();
   }
 
   close() async {
@@ -62,10 +60,12 @@ class EmulatedKeyboard {
     for (int i = 0; i < string.length; i++) {
       var char = string[i];
       writeKey(char);
+      await sink.flush();
+      await Future.delayed(Duration(milliseconds: 5));
       writeRelease();
+      await sink.flush();
+      await Future.delayed(Duration(milliseconds: 5));
     }
-    writeRelease();
-    await sink.flush();
   }
 
   writeRelease() {
@@ -78,7 +78,6 @@ class EmulatedKeyboard {
 
   writeKey(String char) {
     int byte = map[char.toLowerCase()];
-    print('Byte $char: $byte');
     writeReport([0, 0, byte, 0, 0, 0, 0, 0]);
   }
 }
