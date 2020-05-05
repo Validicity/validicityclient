@@ -163,15 +163,20 @@ class TestContinuous extends BaseCommand {
     await keyboard.open();
 
     print("Ready to scan ...");
-    while (true) {
+    var running = true;
+    while (running) {
       var result = await nfc.scan();
-      if (result['STATUS'] == 'OK') {
+      if (result['STATUS'] == 'FAILED SCAN') {
+        running = false;
+      } else if (result['STATUS'] == 'OK') {
         print("Printing ${result['ID']} on keyboard ...");
         await keyboard.type(result['ID']);
       } else {
         print("nah: $result");
       }
+      await Future.delayed(Duration(milliseconds: 50));
     }
+    print("Exit due to scan failure.");
   }
 }
 
