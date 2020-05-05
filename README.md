@@ -147,6 +147,18 @@ After a `sudo reboot` we should have something like this:
     Linux odroidc2 5.4.35-meson64 #trunk SMP PREEMPT Thu Apr 23 18:16:56 CEST 2020 aarch64 GNU/Linux
     validi@odroidc2:~$ 
 
+Collected links:
+
+* https://magazine.odroid.com/article/hid-gadget-device-using-odroid-c2/a
+* https://pastebin.com/V6W5e8Da
+* https://github.com/qlyoung/keyboard-gadget/blob/master/gadget-setup.sh
+* https://www.linux4sam.org/bin/view/Linux4SAM/USBGadgetConfig
+* https://www.rmedgar.com/blog/using-rpi-zero-as-keyboard-send-reports
+* https://source.android.com/devices/input/keyboard-devices#hid-keyboard-and-keypad-page-0x07
+* https://www.microchip.com/forums/m438695.aspx - Notes about timing and pauses!
+* https://medium.com/swlh/building-a-keyboard-with-elixir-fc7bd3f60ec3
+* https://community.st.com/s/question/0D50X00009XkYyR/usb-device-hid-keyboard-example
+
 
 ## Get Validicity software
 In `/home/validi` do:
@@ -327,6 +339,7 @@ For logging, SystemD uses /var/log/system.log. To filter the log use:
 ## How it operates
 This client picks up a YAML configuration from the local file `~/validicity.yaml` and then proceeds to run continuously until interrupted via Linux signal.
 
+* https://wiki.odroid.com/odroid-c2/application_note/software/board_identification
 
 ## Notes
 
