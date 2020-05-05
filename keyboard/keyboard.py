@@ -201,7 +201,7 @@ class HidDaemon(object):
 
         with open('/sys/kernel/config/usb_gadget/%s/UDC' % f_dev_name, 'w') as fd: fd.write('\r\n'.join(os.listdir('/sys/class/udc')))
 
-        subprocess.check_call("chmod a+w %s" % self._devpath, shell=True, close_fds=True)
+        subprocess.check_call("chmod a+rw %s" % self._devpath, shell=True, close_fds=True)
 
     def run(self):
         if not self._libcomposite_already_running:
