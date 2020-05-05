@@ -39,6 +39,7 @@ main(List<String> arguments) async {
         callback: (fn) => configFile = fn)
     ..addCommand(TestNFCCommand())
     ..addCommand(TestEmulatedKeyboard())
+    ..addCommand(TestContinuous())
     ..addCommand(RegisterCommand())
     ..addCommand(BootstrapCommand())
     ..addCommand(StatusCommand())

@@ -112,7 +112,7 @@ abstract class BaseCommand extends Command implements CredentialsHolder {
 
 class TestNFCCommand extends BaseCommand {
   final name = "testnfc";
-  final description = "Test NFC scanning to verify it works.";
+  final description = "Test a single NFC scan to verify it works.";
 
   void exec() async {
     var nfc = NFCDriver();
@@ -147,6 +147,31 @@ class TestEmulatedKeyboard extends BaseCommand {
     await keyboard.type('world');
     await keyboard.close();
     print("Done.");
+  }
+}
+
+class TestContinuous extends BaseCommand {
+  final name = "testcontinuous";
+  final description = "Scan and type to keyboard continuously.";
+
+  void exec() async {
+    var nfc = NFCDriver();
+    print("Starting NFC scanner ...");
+    await nfc.start();
+    var keyboard = EmulatedKeyboard();
+    print("Opening emulated keyboard ...");
+    await keyboard.open();
+
+    print("Ready to scan ...");
+    while (true) {
+      var result = await nfc.scan();
+      if (result['STATUS'] == 'OK') {
+        print("Printing ${result['ID']} on keyboard ...");
+        await keyboard.type(result['ID']);
+      } else {
+        print("No tag scanned");
+      }
+    }
   }
 }
 

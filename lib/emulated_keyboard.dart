@@ -1,7 +1,5 @@
 import 'dart:io';
 
-import 'dart:typed_data';
-
 class EmulatedKeyboard {
   String device = '/dev/hidg0';
   IOSink sink;
