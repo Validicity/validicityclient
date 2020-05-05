@@ -30,7 +30,8 @@ class NFCDriver {
   }
 
   send(String cmd) async {
-    await driver.stdin.writeln(cmd);
+    driver.stdin.writeln(cmd);
+    await driver.stdin.flush();
   }
 
   Future<Map<String, dynamic>> scan() async {

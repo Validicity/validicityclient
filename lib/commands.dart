@@ -175,7 +175,7 @@ class TestContinuous extends BaseCommand {
       } else {
         print("$result");
       }
-      await Future.delayed(Duration(milliseconds: 50));
+      await Future.delayed(Duration(milliseconds: 200));
     }
     print("Exit due to scan failure.");
   }
