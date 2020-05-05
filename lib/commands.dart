@@ -171,8 +171,9 @@ class TestContinuous extends BaseCommand {
       } else if (result['STATUS'] == 'OK') {
         print("Printing ${result['ID']} on keyboard ...");
         await keyboard.type(result['ID']);
+        print("Printed.");
       } else {
-        print("nah: $result");
+        print("$result");
       }
       await Future.delayed(Duration(milliseconds: 50));
     }
