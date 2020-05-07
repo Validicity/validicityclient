@@ -10,27 +10,6 @@ printVersion(v) {
 }
 
 main(List<String> arguments) async {
-  // Trap process signals (ctrl-c etc)
-  /*
-  doExit() {
-    print("Exiting");
-    exit(0);
-  }
-
-  ProcessSignal.sighup.watch().listen((ProcessSignal signal) {
-    print("HUP");
-    doExit();
-  });
-
-  ProcessSignal.sigint.watch().listen((ProcessSignal signal) {
-    print("INT");
-    doExit();
-  });
-  ProcessSignal.sigterm.watch().listen((ProcessSignal signal) {
-    print("TERM");
-    doExit();
-  });
-*/
   var runner = CommandRunner("validicityclient", "Daemon for Validicity.")
     ..argParser.addOption("config",
         abbr: "c",
@@ -41,7 +20,6 @@ main(List<String> arguments) async {
     ..addCommand(TestEmulatedKeyboard())
     ..addCommand(TestContinuous())
     ..addCommand(RegisterCommand())
-    ..addCommand(BootstrapCommand())
     ..addCommand(StatusCommand())
     ..argParser.addFlag('version',
         negatable: false,

@@ -12,10 +12,10 @@ import 'package:validicitylib/rest.dart';
 import 'package:path/path.dart' as path;
 import 'validicityclient.dart';
 
-const String clientID = "com.validicity.client";
+const String clientID = "city.validi.validicityclient";
 
 abstract class BaseCommand extends Command implements CredentialsHolder {
-  RestClient client;
+  // RestClient client;
   ValidicityServerAPI api;
   Map<String, dynamic> result;
   File _credentialsFile;
@@ -40,7 +40,7 @@ abstract class BaseCommand extends Command implements CredentialsHolder {
   void run() async {
     configureValidicity(globalResults);
     var url = Uri.parse(config.api.url);
-    api = ValidicityServerAPI(clientID, holder: this);
+    api = ValidicityServerAPI(config.api.clientID, holder: this);
     api
       ..username = config.api.username
       ..password = config.api.password
@@ -194,21 +194,6 @@ class StatusCommand extends BaseCommand {
   }
 }
 
-class BootstrapCommand extends BaseCommand {
-  String description = "Bootstrap of Validicity creating admin account etc.";
-  String name = "bootstrap";
-
-  BootstrapCommand() {
-    argParser.addOption('file',
-        abbr: 'f', help: "The JSON file with the bootstrap content");
-  }
-
-  void exec() async {
-    var payload = loadFile(argResults['file']);
-    await client.doPost('bootstrap', payload, auth: false);
-  }
-}
-
 class CreateKeysCommand extends BaseCommand {
   String description = "Create keys for this client in the Validicity system.";
   String name = "createkeys";
@@ -247,7 +232,6 @@ class RegisterCommand extends BaseCommand {
     if (validicityKey == null) {
       print("Keys do not exist, you first need to create new keys");
     }
-    var payload = {"public": validicityKey.publicKey, "account": boardId};
-    await client.doPost('register', payload);
+    await api.register(validicityKey.publicKey, boardId);
   }
 }

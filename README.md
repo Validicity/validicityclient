@@ -328,7 +328,6 @@ Now add it:
     sudo systemctl enable validicityclient.service
     sudo systemctl start validicityclient.service
 
-
 Check status with `sudo systemctl status validicityclient`.
 
 For logging, SystemD uses /var/log/system.log. To filter the log use:
