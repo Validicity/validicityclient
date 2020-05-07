@@ -25,5 +25,5 @@ api:
   # Why do we need scopes? Default value seems to not work for this one
   scopes: ["client"]
   password: "mupp"
-  clientID: "com.validicity.client"
+  clientID: "city.validi.validicityclient"
   application: "validicity"
