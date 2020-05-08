@@ -3,7 +3,7 @@ PREFIX = /usr/local
 all: validicityclient
 
 validicityclient: bin/validicityclient.dart
-	pub get
+	pub run pubspec_extract
 	dart2native -o $@ $^
 
 .PHONY: install

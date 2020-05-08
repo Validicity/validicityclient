@@ -1,1 +1,3 @@
-make clean && make && sudo make install
+pub upgrade
+./generate.sh
+make clean && make

@@ -1,10 +1,11 @@
 import 'package:validicityclient/commands.dart';
 import 'package:validicityclient/validicityclient.dart';
+import 'package:validicityclient/pubspec.dart';
 
 /// Print version and exit
 printVersion(v) {
   if (v) {
-    print('0.1.0');
+    print(Pubspec.version);
     exit(0);
   }
 }
