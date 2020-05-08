@@ -35,10 +35,12 @@ class Pubspec {
   };
 
   static const Map<dynamic, dynamic> dependencies = <dynamic, dynamic>{
+    'nanodart': '^1.0.0',
     'async': null,
     'args': '^1.5.2',
     'http': '^0.12.0+4',
     'logging': '^0.11.3+2',
+    'json_annotation': '^3.0.0',
     'validicitylib': <dynamic, dynamic>{
       'path': '../validicitylib',
     },
@@ -47,6 +49,7 @@ class Pubspec {
   static const Map<dynamic, dynamic> dev_dependencies = <dynamic, dynamic>{
     'build_runner': '^1.8.0',
     'pubspec_extract': '^1.2.0',
+    'json_serializable': '^3.3.0',
   };
 
   static const List<String> authors = <String>[

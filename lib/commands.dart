@@ -37,8 +37,19 @@ abstract class BaseCommand extends Command implements CredentialsHolder {
   // We try to request all scopes
   List<String> scopes = ['admin', 'client', 'customer'];
 
+  // Load any state from disk etc
+  load() {
+    loadKey();
+  }
+
   void run() async {
+    // Configure
     configureValidicity(globalResults);
+
+    // Load state
+    load();
+
+    // Set up API
     var url = Uri.parse(config.api.url);
     api = ValidicityServerAPI(config.api.clientID, holder: this);
     api
@@ -47,6 +58,8 @@ abstract class BaseCommand extends Command implements CredentialsHolder {
       ..scopes = scopes
       ..server = url.host
       ..responseHandler = handleResponse;
+
+    // Execute action and handle result
     try {
       await exec();
     } catch (e) {
@@ -211,7 +224,8 @@ class CreateKeysCommand extends BaseCommand {
       print(
           "Keys already exist, can not create new keys. Remove existing key file first.");
     } else {
-      Key.createKeys();
+      String path = createKey();
+      print("Keys created in ${path}");
     }
   }
 }

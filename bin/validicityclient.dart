@@ -20,6 +20,7 @@ main(List<String> arguments) async {
     ..addCommand(TestNFCCommand())
     ..addCommand(TestEmulatedKeyboard())
     ..addCommand(TestContinuous())
+    ..addCommand(CreateKeysCommand())
     ..addCommand(RegisterCommand())
     ..addCommand(StatusCommand())
     ..argParser.addFlag('version',

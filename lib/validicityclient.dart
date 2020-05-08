@@ -18,6 +18,7 @@ export 'package:validicityclient/commands.dart';
 const appName = 'validityclient';
 
 String configFile = 'validity.yaml';
+
 String boardId = readBoardId();
 
 String readBoardId() {

@@ -10,10 +10,13 @@ executables:
   validicityclient: validicityclient
 
 dependencies:
+  nanodart: ^1.0.0
   async:
   args: ^1.5.2
   http: ^0.12.0+4
   logging: ^0.11.3+2
+  #checked_yaml: ^1.0.2
+  json_annotation: ^3.0.0
 
   validicitylib:
     path: ../validicitylib
@@ -21,3 +24,4 @@ dependencies:
 dev_dependencies:
   build_runner: ^1.8.0
   pubspec_extract: ^1.2.0
+  json_serializable: ^3.3.0
