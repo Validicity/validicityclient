@@ -1,15 +1,16 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:args/command_runner.dart';
-import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:validicityclient/emulated_keyboard.dart';
-import 'package:validicityclient/key.dart';
-import 'package:validicityclient/nfc.dart';
+import 'package:path/path.dart' as path;
 import 'package:validicitylib/api.dart';
 import 'package:validicitylib/config.dart';
+import 'package:validicitylib/model/key.dart';
 import 'package:validicitylib/rest.dart';
-import 'package:path/path.dart' as path;
+
+import 'emulated_keyboard.dart';
+import 'nfc.dart';
 import 'validicityclient.dart';
 
 const String clientID = "city.validi.validicityclient";
