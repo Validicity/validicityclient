@@ -247,6 +247,6 @@ class RegisterCommand extends BaseCommand {
     if (validicityKey == null) {
       print("Keys do not exist, you first need to create new keys");
     }
-    await api.register(validicityKey.publicKey, boardId);
+    await api.register(validicityKey.publicKey);
   }
 }

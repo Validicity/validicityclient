@@ -16,7 +16,6 @@ abstract class GenericCommand extends GenericSubCommand {
 
 abstract class GenericSubCommand extends BaseCommand {
   String entity, description;
-  RestClient client;
 
   GenericSubCommand(this.entity, this.description);
 
@@ -42,7 +41,7 @@ class GenericCreateCommand extends GenericSubCommand {
   void exec() async {
     var fn = argResults['file'];
     var payload = loadFile(fn);
-    await client.doPost('${entity}', payload);
+    await api.getClient().doPost('${entity}', payload);
   }
 }
 
@@ -60,7 +59,7 @@ class GenericUpdateCommand extends GenericSubCommand {
   void exec() async {
     var fn = argResults['file'];
     var id = argResults['id'];
-    await client.doPut('$entity/$id', loadFile(fn));
+    await api.getClient().doPut('$entity/$id', loadFile(fn));
   }
 }
 
@@ -75,7 +74,7 @@ class GenericDeleteCommand extends GenericSubCommand {
 
   void exec() async {
     var id = argResults['id'];
-    await client.doDelete('${entity}/${id}');
+    await api.getClient().doDelete('${entity}/${id}');
   }
 }
 
@@ -91,6 +90,6 @@ class GenericGetCommand extends GenericSubCommand {
 
   void exec() async {
     var id = argResults['id'];
-    await client.doGet(id != null ? '${entity}/$id' : '${entity}');
+    await api.getClient().doGet(id != null ? '${entity}/$id' : '${entity}');
   }
 }
