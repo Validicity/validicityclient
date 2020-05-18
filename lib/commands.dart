@@ -312,6 +312,8 @@ class RegisterCommand extends BaseCommand {
       print("Keys do not exist, you first need to create new keys");
     }
     await api.register(validicityKey.publicKey);
+    print(
+        "Public key ${validicityKey.publicKey} registered for user ${config.api.username}");
   }
 }
 
