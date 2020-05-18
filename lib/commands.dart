@@ -7,6 +7,7 @@ import 'package:path/path.dart' as path;
 import 'package:validicitylib/api.dart';
 import 'package:validicitylib/config.dart';
 import 'package:validicitylib/model/key.dart';
+import 'package:validicitylib/model/sample.dart';
 import 'package:validicitylib/rest.dart';
 
 import 'emulated_keyboard.dart';
@@ -178,14 +179,74 @@ class TestContinuous extends BaseCommand {
 
     print("Ready to scan ...");
     var running = true;
+    String lastId;
+    DateTime threshold = DateTime.now();
     while (running) {
       var result = await nfc.scan();
       if (result['STATUS'] == 'FAILED SCAN') {
         running = false;
       } else if (result['STATUS'] == 'OK') {
-        print("Printing ${result['ID']} on keyboard ...");
-        await keyboard.type(result['ID']);
-        print("Printed.");
+        var id = result['ID'];
+        if (id != lastId || DateTime.now().isAfter(threshold)) {
+          print("Printing ${result['ID']} on keyboard ...");
+          await keyboard.type(id);
+          lastId = id;
+          threshold = DateTime.now().add(Duration(seconds: 5));
+          print("Printed.");
+        } else {
+          print("Ignored duplicate scan.");
+        }
+      } else {
+        print("$result");
+      }
+      await Future.delayed(Duration(milliseconds: 200));
+    }
+    print("Exit due to scan failure.");
+  }
+}
+
+class DaemonCommand extends BaseCommand {
+  final name = "daemon";
+  final description =
+      "Scan, submit to Validicity and type to keyboard continuously.";
+
+  void exec() async {
+    var nfc = NFCDriver();
+    print("Starting NFC scanner ...");
+    await nfc.start();
+    var keyboard = EmulatedKeyboard();
+    print("Opening emulated keyboard ...");
+    await keyboard.open();
+
+    print("Ready to scan ...");
+    var running = true;
+    String lastId;
+    DateTime threshold = DateTime.now();
+    while (running) {
+      var result = await nfc.scan();
+      if (result['STATUS'] == 'FAILED SCAN') {
+        running = false;
+      } else if (result['STATUS'] == 'OK') {
+        var scannedSerial = result['ID'];
+        if (scannedSerial != lastId || DateTime.now().isAfter(threshold)) {
+          // First get previous known record (block) for this Sample
+          var previousJson = await api.findSample(scannedSerial);
+          // TODO: Error handling
+          print(previousJson);
+          var previous = Sample.fromJson(previousJson);
+          // Then build new sample
+          var sample = Sample()..serial = scannedSerial;
+          sample.seal(validicityKey, previous);
+          // And submit it
+          result = await api.submitSample(sample);
+          print("Printing $scannedSerial on keyboard ...");
+          await keyboard.type(scannedSerial);
+          lastId = scannedSerial;
+          threshold = DateTime.now().add(Duration(seconds: 5));
+          print("Printed.");
+        } else {
+          print("Ignored duplicate scan.");
+        }
       } else {
         print("$result");
       }
@@ -248,5 +309,38 @@ class RegisterCommand extends BaseCommand {
       print("Keys do not exist, you first need to create new keys");
     }
     await api.register(validicityKey.publicKey);
+  }
+}
+
+class SampleSubmitCommand extends BaseCommand {
+  String description = "Manually make a new Sample event.";
+  String name = "sample";
+
+  RegisterCommand() {
+    argParser.addOption('serial', abbr: 's', help: "The serial of the Sample");
+    argParser.addOption('file',
+        abbr: 'f', help: "The JSON file with the sample content");
+  }
+
+  void exec() async {
+    var sampleJson = loadFile(argResults['file']);
+    if (validicityKey == null) {
+      print(
+          "Keys do not exist, you first need to create new keys and register.");
+    } else {
+      var serial = argResults['serial'];
+      if (serial == null) {
+        print("No serial given!");
+      } else {
+        // First get previous known record (block) for this Sample
+        var previousJson = await api.findSample(serial);
+        var previous = Sample.fromJson(previousJson);
+        // Then build new sample
+        var sample = Sample.fromJson(sampleJson);
+        sample.seal(validicityKey, previous);
+        // And submit it
+        result = await api.submitSample(sample);
+      }
+    }
   }
 }

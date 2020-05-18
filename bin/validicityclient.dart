@@ -23,6 +23,8 @@ main(List<String> arguments) async {
         ..addCommand(TestContinuous())
         ..addCommand(CreateKeysCommand())
         ..addCommand(RegisterCommand())
+        ..addCommand(SampleSubmitCommand())
+        ..addCommand(DaemonCommand())
         ..addCommand(StatusCommand())
         ..argParser.addFlag('version',
             negatable: false,
