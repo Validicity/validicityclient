@@ -22,6 +22,6 @@ dependencies:
     path: ../validicitylib
 
 dev_dependencies:
-  build_runner: ^1.8.0
+  build_runner: ^1.10.0
   pubspec_extract: ^1.2.0
   json_serializable: ^3.3.0
