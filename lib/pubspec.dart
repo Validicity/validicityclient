@@ -47,7 +47,7 @@ class Pubspec {
   };
 
   static const Map<dynamic, dynamic> dev_dependencies = <dynamic, dynamic>{
-    'build_runner': '^1.8.0',
+    'build_runner': '^1.10.0',
     'pubspec_extract': '^1.2.0',
     'json_serializable': '^3.3.0',
   };
