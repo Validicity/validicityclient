@@ -233,7 +233,10 @@ class DaemonCommand extends BaseCommand {
           var previousJson = await api.findSample(scannedSerial);
           // TODO: Error handling
           print(previousJson);
-          var previous = Sample.fromJson(previousJson);
+          var previous;
+          if (previousJson != null) {
+            previous = Sample.fromJson(previousJson);
+          }
           // Then build new sample
           var sample = Sample()..serial = scannedSerial;
           sample.seal(validicityKey, previous);
