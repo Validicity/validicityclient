@@ -199,7 +199,7 @@ class TestContinuous extends BaseCommand {
       } else {
         print("$result");
       }
-      await Future.delayed(Duration(milliseconds: 200));
+      await Future.delayed(Duration(milliseconds: 300));
     }
     print("Exit due to scan failure.");
   }
@@ -253,7 +253,7 @@ class DaemonCommand extends BaseCommand {
       } else {
         print("$result");
       }
-      await Future.delayed(Duration(milliseconds: 200));
+      await Future.delayed(Duration(milliseconds: 300));
     }
     print("Exit due to scan failure.");
   }
