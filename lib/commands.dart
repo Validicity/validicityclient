@@ -230,13 +230,9 @@ class DaemonCommand extends BaseCommand {
         var scannedSerial = result['ID'];
         if (scannedSerial != lastId || DateTime.now().isAfter(threshold)) {
           // First get previous known record (block) for this Sample
-          var previousJson = await api.findSample(scannedSerial);
+          var previous = await api.findSample(scannedSerial);
           // TODO: Error handling
-          print(previousJson);
-          var previous;
-          if (previousJson != null) {
-            previous = Sample.fromJson(previousJson);
-          }
+          print(previous);
           // Then build new sample
           var sample = Sample()..serial = scannedSerial;
           sample.seal(validicityKey, previous);
@@ -338,8 +334,7 @@ class SampleSubmitCommand extends BaseCommand {
         print("No serial given!");
       } else {
         // First get previous known record (block) for this Sample
-        var previousJson = await api.findSample(serial);
-        var previous = Sample.fromJson(previousJson);
+        var previous = await api.findSample(serial);
         // Then build new sample
         var sample = Sample.fromJson(sampleJson);
         sample.seal(validicityKey, previous);
